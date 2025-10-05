@@ -1,12 +1,31 @@
 package com.corsairops.shared.exception;
 
 import com.corsairops.shared.dto.ErrorResponse;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 
 public class SimpleGlobalExceptionHandler {
+
+    private static final Log log = LogFactory.getLog(SimpleGlobalExceptionHandler.class);
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
+        String errorMessage = ex.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
+        ErrorResponse errorResponse = new ErrorResponse(
+                400,
+                "Bad Request",
+                errorMessage,
+                ex.getAllErrors(),
+                java.time.LocalDateTime.now().toString()
+        );
+        log(ex);
+        return ResponseEntity.status(400).body(errorResponse);
+    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
@@ -16,6 +35,7 @@ public class SimpleGlobalExceptionHandler {
                 ex.getMessage(),
                 LocalDateTime.now().toString()
         );
+        log(ex);
         return ResponseEntity.status(400).body(errorResponse);
     }
 
@@ -27,6 +47,7 @@ public class SimpleGlobalExceptionHandler {
                 ex.getMessage(),
                 LocalDateTime.now().toString()
         );
+        log(ex);
         return ResponseEntity.status(ex.getStatus()).body(errorResponse);
     }
 
@@ -38,6 +59,11 @@ public class SimpleGlobalExceptionHandler {
                 ex.getMessage(),
                 LocalDateTime.now().toString()
         );
+        log(ex);
         return ResponseEntity.status(500).body(errorResponse);
+    }
+
+    protected void log(Exception ex) {
+        log.error(ex.getMessage(), ex);
     }
 }
