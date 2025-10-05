@@ -4,6 +4,7 @@ import com.corsairops.shared.dto.ErrorResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -12,6 +13,18 @@ import java.time.LocalDateTime;
 public class SimpleGlobalExceptionHandler {
 
     private static final Log log = LogFactory.getLog(SimpleGlobalExceptionHandler.class);
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                400,
+                "Bad Request",
+                "Malformed JSON request",
+                LocalDateTime.now().toString()
+        );
+        log(ex);
+        return ResponseEntity.status(400).body(errorResponse);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
