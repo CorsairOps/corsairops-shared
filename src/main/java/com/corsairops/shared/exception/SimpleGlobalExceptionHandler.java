@@ -1,18 +1,42 @@
 package com.corsairops.shared.exception;
 
 import com.corsairops.shared.dto.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
 
 public class SimpleGlobalExceptionHandler {
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Log log = LogFactory.getLog(SimpleGlobalExceptionHandler.class);
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<ErrorResponse> handleHttpClientErrorException(HttpClientErrorException ex) {
+
+        String message;
+        try {
+            ErrorResponse errorResponse = objectMapper.readValue(ex.getResponseBodyAsString(), ErrorResponse.class);
+            message = errorResponse.getMessage();
+        } catch (Exception e) {
+            message = ex.getStatusText();
+        }
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                ex.getStatusCode().value(),
+                ex.getStatusText(),
+                message,
+                LocalDateTime.now().toString()
+        );
+        log(ex);
+        return ResponseEntity.status(ex.getStatusCode()).body(errorResponse);
+    }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {

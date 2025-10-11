@@ -7,6 +7,8 @@ public class ErrorResponse {
     private Object data;
     private String timestamp;
 
+    public ErrorResponse() {}
+
     public ErrorResponse(int status, String error, String message, String timestamp) {
         this.status = status;
         this.error = error;
