@@ -14,4 +14,13 @@ public class ClientFactory {
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
         return factory.createClient(UserServiceClient.class);
     }
+
+    public static AssetServiceClient createAssetServiceClient(String baseUrl) {
+        RestClient restClient = RestClient.builder()
+                .baseUrl(baseUrl)
+                .build();
+        RestClientAdapter adapter = RestClientAdapter.create(restClient);
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
+        return factory.createClient(AssetServiceClient.class);
+    }
 }
