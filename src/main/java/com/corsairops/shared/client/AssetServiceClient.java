@@ -31,10 +31,10 @@ public interface AssetServiceClient {
     AssetResponse getAssetById(@PathVariable("id") UUID id);
 
     @GetExchange("/api/assets/ids")
-    List<AssetResponse> getAssetsByIds(@RequestParam String ids);
+    List<AssetResponse> getAssetsByIds(@RequestParam("ids") String ids);
 
     @GetExchange("/api/assets/{id}/locations")
-    List<AssetLocationResponse> getAssetLocations(@PathVariable("id") UUID id, @RequestParam(required = false, defaultValue = "100") Integer max);
+    List<AssetLocationResponse> getAssetLocations(@PathVariable("id") UUID id, @RequestParam(value = "max", required = false, defaultValue = "100") Integer max);
 
     @PutExchange("/api/assets/{id}/locations")
     void changeAssetLocation(@PathVariable("id") UUID id, @RequestBody @Valid AssetLocationRequest locationRequest);

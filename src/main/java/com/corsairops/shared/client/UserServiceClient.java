@@ -17,10 +17,10 @@ public interface UserServiceClient {
     List<User> getAllUsers();
 
     @GetExchange("/api/users/ids")
-    List<User> getUsersByIds(@RequestParam String ids, @RequestParam(defaultValue = "false") boolean allowEmpty);
+    List<User> getUsersByIds(@RequestParam("ids") String ids, @RequestParam(value="allowEmpty", defaultValue = "false") boolean allowEmpty);
 
     @GetExchange("/api/users/{id}")
-    User getUserById(@PathVariable String id);
+    User getUserById(@PathVariable("id") String id);
 
     @GetExchange("/api/users/count")
     Integer getUserCount();

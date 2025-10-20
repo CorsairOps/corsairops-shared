@@ -6,7 +6,7 @@
 
     <groupId>com.corsairops</groupId>
     <artifactId>shared</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 
     <distributionManagement>
         <repository>
